@@ -5,16 +5,31 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -120,7 +135,8 @@ fun FlashQuizApp() {
     NavHost(navController = navController, startDestination = "category") {
         composable("category") {
             CategorySelectionScreen(
-                onCategorySelected = { category -> navController.navigate("quiz/$category") }
+                onCategorySelected = { category -> navController.navigate("quiz/$category") },
+                navController = navController
             )
         }
         composable("quiz/{category}") { backStackEntry ->
@@ -142,24 +158,209 @@ fun FlashQuizApp() {
                 total = total,
                 category = category,
                 sharedPreferences = sharedPreferences,
-                onRestart = { navController.navigate("category") { popUpTo(0) } }
+                onRestart = { navController.navigate("category") { popUpTo(0) } },
+                navController = navController
+            )
+        }
+        composable("about") {
+            AboutScreen(navController = navController)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AboutScreen(navController: NavHostController) {
+    // List of group members (name and matric number)
+    val groupMembers = listOf(
+        Pair("Emenike Chukwuka", "22/000"),
+        Pair("Majeed Alloh", "22/3333"),
+        Pair("John Smith", "22/1111"),
+        Pair("Sarah Johnson", "22/2222"),
+        Pair("Michael Brown", "22/4444"),
+        Pair("Emily Davis", "22/5555"),
+        Pair("David Wilson", "22/6666"),
+        Pair("Jessica Taylor", "22/7777"),
+        Pair("Daniel Anderson", "22/8888"),
+        Pair("Olivia Martinez", "22/9999")
+    )
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text("About FlashQuiz") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // App icon placeholder
+            Box(
+                modifier = Modifier
+                    .size(120.dp)
+                    .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
+            ) {
+                Text(
+                    "Q",
+                    fontSize = 64.sp,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Text(
+                "FlashQuiz Pro",
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                "A fun quiz app to test your knowledge across various categories. Challenge yourself and beat your high scores!",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 24.dp)
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // Group members section
+            Text(
+                "Group Members:",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            )
+
+            // Display group members in a grid
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier.fillMaxWidth()
+                    .height(400.dp),
+                contentPadding = PaddingValues(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(groupMembers) { member ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(80.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(12.dp)
+                                .fillMaxSize(),
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = member.first,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Text(
+                                text = "Matric: ${member.second}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Feature list
+            Text(
+                "Features:",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            )
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.Start
+            ) {
+                FeatureItem("Multiple quiz categories")
+                FeatureItem("Timed questions")
+                FeatureItem("Score tracking")
+                FeatureItem("Motivational feedback")
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                "Version 1.0.0",
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }
 }
 
 @Composable
-fun CategorySelectionScreen(onCategorySelected: (String) -> Unit) {
+fun FeatureItem(text: String) {
+    Row(
+        modifier = Modifier.padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Default.Check,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text, style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CategorySelectionScreen(
+    onCategorySelected: (String) -> Unit,
+    navController: NavHostController
+) {
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
         topBar = {
-            Text(
-                text = "FlashQuiz Pro",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center
+            CenterAlignedTopAppBar(
+                title = { Text("FlashQuiz Pro") },
+                actions = {
+                    IconButton(onClick = { navController.navigate("about") }) {
+                        Icon(
+                            imageVector = Icons.Filled.Info,
+                            contentDescription = "About",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
             )
         }
     ) { innerPadding ->
@@ -171,22 +372,58 @@ fun CategorySelectionScreen(onCategorySelected: (String) -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text("Select a Category", style = MaterialTheme.typography.headlineSmall)
+            Text("Select a Category",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(bottom = 16.dp))
+
             Spacer(modifier = Modifier.height(16.dp))
+
             questionsByCategory.keys.forEach { category ->
-                Button(
-                    onClick = { onCategorySelected(category) },
+                OutlinedCard(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp)
+                        .padding(vertical = 8.dp),
+                    onClick = { onCategorySelected(category) }
                 ) {
-                    Text(category)
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    shape = CircleShape
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                category.first().toString(),
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            category,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Icon(
+                            imageVector = Icons.Default.ArrowForward,
+                            contentDescription = "Start quiz",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuizScreen(
     category: String,
@@ -228,13 +465,8 @@ fun QuizScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            Text(
-                text = "$category Quiz",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center
+            CenterAlignedTopAppBar(
+                title = { Text("$category Quiz") }
             )
         }
     ) { innerPadding ->
@@ -257,14 +489,32 @@ fun QuizScreen(
                 Text(
                     text = "Time: $timeLeft s",
                     fontSize = 18.sp,
-                    color = if (timeLeft <= 3) Color.Red else Color.Black
+                    color = if (timeLeft <= 3) Color.Red else MaterialTheme.colorScheme.onSurface
                 )
             }
+
+            // Timer progress bar
+            LinearProgressIndicator(
+                progress = timeLeft / 10f,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp),
+                color = when {
+                    timeLeft > 6 -> Color.Green
+                    timeLeft > 3 -> Color.Yellow
+                    else -> Color.Red
+                }
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             Text(
                 text = currentQuestion.text,
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(vertical = 16.dp)
             )
+
             currentQuestion.options.forEachIndexed { index, option ->
                 Button(
                     onClick = {
@@ -282,7 +532,8 @@ fun QuizScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 4.dp)
+                        .padding(vertical = 4.dp),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(option)
                 }
@@ -291,13 +542,15 @@ fun QuizScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResultsScreen(
     score: Int,
     total: Int,
     category: String,
     sharedPreferences: SharedPreferences,
-    onRestart: () -> Unit
+    onRestart: () -> Unit,
+    navController: NavHostController
 ) {
     var highScore by remember { mutableStateOf(sharedPreferences.getInt("highScore", 0)) }
     val isNewHighScore = score > highScore
@@ -307,16 +560,28 @@ fun ResultsScreen(
         sharedPreferences.edit { putInt("highScore", highScore) }
     }
 
+    val percentage = (score.toFloat() / total.toFloat()) * 100
+    val resultMessage = when {
+        percentage >= 90 -> "Genius! 🎓"
+        percentage >= 70 -> "Great job! 👍"
+        percentage >= 50 -> "Good effort! 💪"
+        else -> "Keep practicing! 📚"
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            Text(
-                text = "Quiz Results",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center
+            CenterAlignedTopAppBar(
+                title = { Text("Quiz Results") },
+                actions = {
+                    IconButton(onClick = { navController.navigate("about") }) {
+                        Icon(
+                            imageVector = Icons.Filled.Info,
+                            contentDescription = "About",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
             )
         }
     ) { innerPadding ->
@@ -324,35 +589,76 @@ fun ResultsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp),
+                .padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            // Score circle
+            Box(
+                modifier = Modifier
+                    .size(180.dp)
+                    .border(
+                        BorderStroke(8.dp, MaterialTheme.colorScheme.primary),
+                        CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "$score",
+                        style = MaterialTheme.typography.displayLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "out of $total",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             Text(
-                text = "You scored $score out of $total",
-                style = MaterialTheme.typography.headlineSmall
+                text = resultMessage,
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(vertical = 8.dp)
             )
+
+            Text(
+                text = motivations[Random.nextInt(motivations.size)],
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.padding(horizontal = 24.dp)
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
             if (isNewHighScore) {
                 Text(
-                    text = "New High Score! 🎉",
-                    style = MaterialTheme.typography.bodyLarge,
+                    text = "🎉 New High Score! 🎉",
+                    style = MaterialTheme.typography.titleLarge,
                     color = Color.Green
                 )
             } else {
                 Text(
                     text = "High Score: $highScore",
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = motivations[Random.nextInt(motivations.size)],
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.Blue
-            )
+
             Spacer(modifier = Modifier.height(32.dp))
-            Button(onClick = onRestart) {
-                Text("Restart Quiz")
+
+            Button(
+                onClick = onRestart,
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .height(50.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("Restart Quiz", fontSize = 18.sp)
             }
         }
     }
