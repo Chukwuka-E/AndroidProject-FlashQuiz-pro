@@ -173,7 +173,7 @@ fun FlashQuizApp() {
 fun AboutScreen(navController: NavHostController) {
     // List of group members (name and matric number)
     val groupMembers = listOf(
-        Pair("Emenike Chukwuka", "22/000"),
+        Pair("Emenike Chukwuka", "22/0469"),
         Pair("Majeed Alloh", "22/3333"),
         Pair("John Smith", "22/1111"),
         Pair("Sarah Johnson", "22/2222"),
