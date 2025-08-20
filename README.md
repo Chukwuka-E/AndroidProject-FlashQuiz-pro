@@ -16,8 +16,26 @@ It allows users to test their knowledge across multiple categories, track scores
 ---
 
 ## Group members ; 
-*Emenike Chukwuka - 22/0469*
+*1. Emenike Chukwuka - 22/0469*
 
+*2. Alao Olabode Abdul-Majeed 22/2384*
+
+*3. Adediran Abraham 22/2240*
+
+*4. Ibrahim olabode marvellous 22/2664*
+
+*5. Fagbohunlu Samson 22/3028*
+
+*6. OMOTINUGBON JOSHUA okikiola 22/3046*
+
+*7. Akanbi Al-Arafat Oluwabimi 22/2494*
+
+*8. Nwalibe chiemerie favour 22/2813*
+
+*9. Airen Nosakhare Emmanuel 22/1339*
+
+*10. ODEBOWALE OLADUNJOYE ADELEKE 22/1016* 
+     
 
 ---
 
