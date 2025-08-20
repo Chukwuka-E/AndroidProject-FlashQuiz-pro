@@ -49,5 +49,5 @@ It allows users to test their knowledge across multiple categories, track scores
 ## Hosted link 
 * https://github.com/Chukwuka-E/AndroidProject-moodlift/releases/download/v1.0.0/app-debug.apk*
   
-## Deployed link 
+## Repository link 
 *  https://github.com/Chukwuka-E/AndroidProject-FlashQuiz-pro.git *
